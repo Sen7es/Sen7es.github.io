@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="一些小伙伴们经常会用到虚拟机、但是虚拟机有多种方式、我这边上传一种我自认为觉得比较方便的一些虚拟机搭建；常用的有 VirtualBox、Vmware两种、其实我觉得如果是window 我推荐大家用 Vmware 、如果单纯的用linux修改一些文本的话 还是比较推荐大家用 Virtual Box；好了 废话不多说 咱们直接进入主题：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="虚拟机和连接ssh步骤教程">
+<meta property="og:url" content="http://example.com/2021/07/14/vagrantSet/index.html">
+<meta property="og:site_name" content="个人博客">
+<meta property="og:description" content="一些小伙伴们经常会用到虚拟机、但是虚拟机有多种方式、我这边上传一种我自认为觉得比较方便的一些虚拟机搭建；常用的有 VirtualBox、Vmware两种、其实我觉得如果是window 我推荐大家用 Vmware 、如果单纯的用linux修改一些文本的话 还是比较推荐大家用 Virtual Box；好了 废话不多说 咱们直接进入主题：">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-07-14T07:43:31.453Z">
+<meta property="article:modified_time" content="2021-07-14T08:34:58.445Z">
+<meta property="article:author" content="Devil">
+<meta property="article:tag" content="Vagrant">
+<meta property="article:tag" content="Virtualbox">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2021/07/14/vagrantSet/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>虚拟机和连接ssh步骤教程 | 个人博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/07/14/vagrantSet/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Devil">
+      <meta itemprop="description" content="没有伞的孩子必须努力奔跑！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          虚拟机和连接ssh步骤教程
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-07-14 15:43:31 / 修改时间：16:34:58" itemprop="dateCreated datePublished" datetime="2021-07-14T15:43:31+08:00">2021-07-14</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Vagrant-Box/" itemprop="url" rel="index"><span itemprop="name">Vagrant Box</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>一些小伙伴们经常会用到虚拟机、但是虚拟机有多种方式、我这边上传一种我自认为觉得比较方便的一些虚拟机搭建；<br>常用的有 VirtualBox、Vmware两种、其实我觉得如果是window 我推荐大家用 Vmware 、如果单纯的用linux修改一些文本的话 还是比较推荐大家用 Virtual Box；<br>好了 废话不多说 咱们直接进入主题：</p>
+<p><escape><span id="more"></span></escape></p>
+<h3 id="步骤一：下载Virtualbox（linux-虚拟机）"><a href="#步骤一：下载Virtualbox（linux-虚拟机）" class="headerlink" title="步骤一：下载Virtualbox（linux 虚拟机）"></a>步骤一：下载Virtualbox（linux 虚拟机）</h3><blockquote>
+<p>官方下载地址：<a href="https://www.virtualbox.org/wiki/Downloads" target="_blank">https://www.virtualbox.org/wiki/Downloads</a></p>
+</blockquote>
+<h3 id="步骤二：下载Vagrant（命令工具）"><a href="#步骤二：下载Vagrant（命令工具）" class="headerlink" title="步骤二：下载Vagrant（命令工具）"></a>步骤二：下载Vagrant（命令工具）</h3><blockquote>
+<p>官方下载地址：<a href="https://www.vagrantup.com/downloads" target="_blank">https://www.vagrantup.com/downloads</a></p>
+</blockquote>
+<h3 id="步骤三：查找VagrantBox-命令-构建虚拟机（此步骤需要以上两个步骤安装完成）"><a href="#步骤三：查找VagrantBox-命令-构建虚拟机（此步骤需要以上两个步骤安装完成）" class="headerlink" title="步骤三：查找VagrantBox 命令 构建虚拟机（此步骤需要以上两个步骤安装完成）"></a>步骤三：查找VagrantBox 命令 构建虚拟机（此步骤需要以上两个步骤安装完成）</h3><blockquote>
+<p>官方地址：<a href="https://app.vagrantup.com/boxes/search" target="_blank">https://app.vagrantup.com/boxes/search</a><br>此页面可以根据自己的需求选择不同的操作系统、我个人比较喜欢的是centos/7、看大家自由选择；选择以后点解New 根据命令行安装；<br>安装完成后 这边提供几个 vagrant命令：</p>
+<blockquote>
+<p>1、vagrant init  #初始化配置；<br>2、vagrant up #启动虚拟机；<br>3、vagrant ssh #登录虚拟机；<br>4、vagrant suspend #挂起虚拟机；<br>5、vagrant reload #重启虚拟机；<br>6、vagrant halt #关闭虚拟机；<br>7,、vagrant status #查看虚拟机状态；<br>8,、vagrant destroy #删除虚拟机。</p>
+</blockquote>
+</blockquote>
+<h3 id="上述步骤完成以后、虚拟机就可以正常打开啦、如需连接-Xshell-那还需要设置几个步骤、"><a href="#上述步骤完成以后、虚拟机就可以正常打开啦、如需连接-Xshell-那还需要设置几个步骤、" class="headerlink" title="上述步骤完成以后、虚拟机就可以正常打开啦、如需连接 Xshell 那还需要设置几个步骤、"></a>上述步骤完成以后、虚拟机就可以正常打开啦、如需连接 Xshell 那还需要设置几个步骤、</h3><blockquote>
+<p>首先进入 ssh命令 vagrant.exe ssh<br>进入最高权限命令：sudo -i<br>然后安装etc命令 yum install -y net-tools<br>返回重启虚拟机：vagrant reload<br>安装linux vim 编辑命令：yum install -y vim<br>因为这样直连xshell是不可以输入密码的所以需要查看修改几个地方、命令： cat /etc/ssh/sshd_config<br>进入编辑修改页面： vim /etc/ssh/sshd_config<br>需要修改的部分命名： </p>
+<blockquote>
+<p>PasswordAuthentication  修改为yes<br>UseLogin  修改为yes</p>
+</blockquote>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Vagrant/" rel="tag"># Vagrant</a>
+              <a href="/tags/Virtualbox/" rel="tag"># Virtualbox</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/07/13/GithubOrder/" rel="prev" title="常用Git命令手册">
+      <i class="fa fa-chevron-left"></i> 常用Git命令手册
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4%E4%B8%80%EF%BC%9A%E4%B8%8B%E8%BD%BDVirtualbox%EF%BC%88linux-%E8%99%9A%E6%8B%9F%E6%9C%BA%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">步骤一：下载Virtualbox（linux 虚拟机）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4%E4%BA%8C%EF%BC%9A%E4%B8%8B%E8%BD%BDVagrant%EF%BC%88%E5%91%BD%E4%BB%A4%E5%B7%A5%E5%85%B7%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">步骤二：下载Vagrant（命令工具）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4%E4%B8%89%EF%BC%9A%E6%9F%A5%E6%89%BEVagrantBox-%E5%91%BD%E4%BB%A4-%E6%9E%84%E5%BB%BA%E8%99%9A%E6%8B%9F%E6%9C%BA%EF%BC%88%E6%AD%A4%E6%AD%A5%E9%AA%A4%E9%9C%80%E8%A6%81%E4%BB%A5%E4%B8%8A%E4%B8%A4%E4%B8%AA%E6%AD%A5%E9%AA%A4%E5%AE%89%E8%A3%85%E5%AE%8C%E6%88%90%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">步骤三：查找VagrantBox 命令 构建虚拟机（此步骤需要以上两个步骤安装完成）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8A%E8%BF%B0%E6%AD%A5%E9%AA%A4%E5%AE%8C%E6%88%90%E4%BB%A5%E5%90%8E%E3%80%81%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%B0%B1%E5%8F%AF%E4%BB%A5%E6%AD%A3%E5%B8%B8%E6%89%93%E5%BC%80%E5%95%A6%E3%80%81%E5%A6%82%E9%9C%80%E8%BF%9E%E6%8E%A5-Xshell-%E9%82%A3%E8%BF%98%E9%9C%80%E8%A6%81%E8%AE%BE%E7%BD%AE%E5%87%A0%E4%B8%AA%E6%AD%A5%E9%AA%A4%E3%80%81"><span class="nav-number">4.</span> <span class="nav-text">上述步骤完成以后、虚拟机就可以正常打开啦、如需连接 Xshell 那还需要设置几个步骤、</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Devil</p>
+  <div class="site-description" itemprop="description">没有伞的孩子必须努力奔跑！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Devil</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
